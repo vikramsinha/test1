@@ -220,7 +220,7 @@ sequenceDiagram
     participant SAP
     Invoicing->>MCF: Invoice1 Created 100
     MCF->>Payments: Charge 30
-    Note over MCF: Cash1: 30<br/>PaidAmount: 30
+    Note over MCF: Invoice1.Cash1: 30<br/>Invoice1.PaidAmount: 30
     SAP->>MCF: Post Cash2 20
     Note over MCF: Invoice1.Cash1: 30<br/>Invoice1.Cash2: 20<br/>Invoice1.PaidAmount: 50
     Invoicing->>MCF: Invoice2 rebill of Invoice1 Created 100
