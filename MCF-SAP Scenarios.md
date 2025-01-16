@@ -193,6 +193,7 @@ sequenceDiagram
     Invoicing->>MCF: Invoice1 Created 100
     MCF->>Payments: Charge 30
     Note over MCF: Cash1: 30<br/>PaidAmount: 30
+    MCF->>SAP: Post Cash1 30
     SAP->>MCF: Post Cash2 70
     Note over MCF: Cash1: 30<br/>Cash2: 70<br/>PaidAmount: 100
     Invoicing->>MCF: Invoice2 rebill of Invoice1 Created 100
