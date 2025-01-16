@@ -60,7 +60,7 @@ sequenceDiagram
     participant SAP
     Invoicing->>MCF: Invoice1 Created 100
     MCF->>Payments: Charge 100
-    Note over MCF: Cash1: 100<br/>PaidAmount: 100
+    Note over MCF: Invoice1.Cash1: 100<br/>Invoice1.PaidAmount: 100
     MCF->>SAP: Post 100 on Invoice1
     Invoicing->>MCF: Rebill Invoice2 Created 100
     Note over MCF: Invoice1 voided
