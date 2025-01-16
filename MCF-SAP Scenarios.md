@@ -192,10 +192,10 @@ sequenceDiagram
     participant SAP
     Invoicing->>MCF: Invoice1 Created 100
     MCF->>Payments: Charge 30
-    Note over MCF: Cash1: 30<br/>PaidAmount: 30
+    Note over MCF: Invoice1.Cash1: 30<br/>Invoice1.PaidAmount: 30
     MCF->>SAP: Post Cash1 30
     SAP->>MCF: Post Cash2 70
-    Note over MCF: Cash1: 30<br/>Cash2: 70<br/>PaidAmount: 100
+    Note over MCF: Invoice1.Cash1: 30<br/>Invoice1.Cash2: 70<br/>Invoice1.PaidAmount: 100
     Invoicing->>MCF: Invoice2 rebill of Invoice1 Created 100
     MCF->>MCF: Invoice1 voided
     MCF->>MCF: Move Cash1 (Credit Card) from Invoice1 to Invoice2
@@ -222,7 +222,7 @@ sequenceDiagram
     MCF->>Payments: Charge 30
     Note over MCF: Cash1: 30<br/>PaidAmount: 30
     SAP->>MCF: Post Cash2 20
-    Note over MCF: Cash1: 30<br/>Cash2: 20<br/>PaidAmount: 50
+    Note over MCF: Invoice1.Cash1: 30<br/>Invoice1.Cash2: 20<br/>Invoice1.PaidAmount: 50
     Invoicing->>MCF: Invoice2 rebill of Invoice1 Created 100
     MCF->>MCF: Invoice1 voided
     MCF->>MCF: Move Cash1 (Credit Card) from Invoice1 to Invoice2
@@ -249,11 +249,11 @@ sequenceDiagram
     participant SAP
     Invoicing->>MCF: Invoice1 Created 100
     MCF->>Payments: Charge 30
-    Note over MCF: Cash1: 30<br/>PaidAmount: 30
+    Note over MCF: Invoice1.Cash1: 30<br/>Invoice1.PaidAmount: 30
     MCF->>SAP: Post 30
     SAP->>SAP: Check payment for 70
     SAP-->>MCF: Failed to post check payment
-    Note over MCF: Cash1: 30<br/>PaidAmount: 30
+    Note over MCF: Invoice1.Cash1: 30<br/>Invoice1.PaidAmount: 30
     Invoicing->>MCF: Invoice2 rebill of Invoice1 Created 100
     MCF->>MCF: Invoice1 voided
     MCF->>MCF: Move Cash1 (Credit Card) from Invoice1 to Invoice2
