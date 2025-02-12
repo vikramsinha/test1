@@ -85,7 +85,7 @@ sequenceDiagram
     Invoicing->>MCF: Rebill Invoice2 Created 100
     Note over MCF: Invoice1 voided
     MCF->>MCF: Move Cash1 from Invoice1 to Invoice2
-    MCF->>SAP: Post -100 on Invoice1
+    MCF->>SAP: Post -100 (reversal of Cash1) on Invoice1
     Note over MCF: Invoice1:<br/>Amount: 100<br/>PaidAmount: 0
     Note over MCF: Invoice2<br/>Amount: 100<br/>Cash1: 100<br/>PaidAmount: 100
     MCF->>SAP: Post 100 on Invoice2
@@ -113,7 +113,7 @@ sequenceDiagram
     MCF->>MCF: Move Cash1 from Invoice1 to Invoice2
     Note over MCF: Invoice1:<br/>Amount: 100<br/>PaidAmount: 0
     Note over MCF: Invoice2:<br/>Amount: 80<br/>Cash1: 100<br/>PaidAmount: 100
-    MCF->>SAP: Post -100 on Invoice1
+    MCF->>SAP: Post -100 (reversal of Cash1) on Invoice1
     MCF->>Payments: Refund -20 (Cash2)
     Note over MCF: Invoice2:<br/>Amount: 80<br/>Cash1: 100<br/>Cash2: -20<br/>PaidAmount: 80
     MCF->>SAP: Post 100 on Invoice2
