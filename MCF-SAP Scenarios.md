@@ -64,15 +64,47 @@ sequenceDiagram
     MCF->>SAP: Post 100 on Invoice1
     Invoicing->>MCF: Rebill Invoice2 Created 100
     Note over MCF: Invoice1 voided
-    MCF->>MCF: Move 100 from Invoice1 to Invoice2
+    MCF->>MCF: Move Cash1 from Invoice1 to Invoice2
+    MCF->>SAP: Post -100 on Invoice1
     Note over MCF: Invoice1.PaidAmount: 0
     Note over MCF: Invoice2.Cash1: 100<br/>Invoice2.PaidAmount: 100
+    MCF->>SAP: Post 100 on Invoice2
+
 ```
 
 <br/>
 <br/>
 <br/>
- 
+
+# Credit Card - Rebill of Paid Invoice - Lower Amount
+```mermaid
+%%{init: {'theme': 'default'} }%%
+sequenceDiagram
+    participant Invoicing
+    participant MCF
+    participant Payments
+    participant SAP
+    Invoicing->>MCF: Invoice1 Created 100
+    MCF->>Payments: Charge 100
+    Note over MCF: Invoice1.Cash1: 100<br/>Invoice1.PaidAmount: 100
+    MCF->>SAP: Post 100 on Invoice1
+    Invoicing->>MCF: Rebill Invoice2 Created 80
+    Note over MCF: Invoice1 voided
+    MCF->>MCF: Move Cash1 from Invoice1 to Invoice2
+    Note over MCF: Invoice1:<br/>Amount: 100<br/>PaidAmount: 0
+    Note over MCF: Invoice2:<br/>Amount: 80<br/>Cash1: 100<br/>PaidAmount: 100
+    MCF->>SAP: Post -100 on Invoice1
+    MCF->>Payments: Refund -20 (Cash2)
+    Note over MCF: Invoice2:<br/>Amount: 80<br/>Cash1: 100<br/>Cash2: -20<br/>PaidAmount: 80
+    MCF->>SAP: Post 100 on Invoice2
+    MCF->>SAP: Post -20 on Invoice2
+
+```
+
+<br/>
+<br/>
+<br/>
+
 # Credit Card - Rebill of Unpaid invoice
 ```mermaid
 %%{init: {'theme': 'default'} }%%
