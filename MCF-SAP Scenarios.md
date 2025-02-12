@@ -273,7 +273,7 @@ sequenceDiagram
 <br/>
 <br/>
 
-# Credit Card - Rebill of invoice with both credit card and check payments but check payments not yet posted to MCF
+# Credit Card - Rebill of invoice with both credit card and check payments but check payments not yet posted to MCF - Credit Card Customer
 ```mermaid
 %%{init: {'theme': 'default'} }%%
 sequenceDiagram
@@ -283,27 +283,28 @@ sequenceDiagram
     participant SAP
     Invoicing->>MCF: Invoice1 Created 100
     MCF->>Payments: Charge 30
-    Note over MCF: Invoice1.Cash1: 30<br/>Invoice1.PaidAmount: 30
+    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 30<br/>PaidAmount: 30
     MCF->>SAP: Post 30
     SAP->>SAP: Check payment for 70
     SAP-->>MCF: Failed to post check payment
-    Note over MCF: Invoice1.Cash1: 30<br/>Invoice1.PaidAmount: 30
+    Note over MCF: Invoice1:<br/>Cash1: 30<br/>PaidAmount: 30
     Invoicing->>MCF: Invoice2 rebill of Invoice1 Created 100
-    MCF->>MCF: Invoice1 voided
-    MCF->>MCF: Move Cash1 (Credit Card) from Invoice1 to Invoice2
-    Note over MCF: Invoice1.PaidAmount: 0
-    Note over MCF: Invoice2.Cash1: 30<br/>Invoice2.PaidAmount: 30<br/>Invoice2.Amount: 100
+    MCF->>MCF: Invoice1 voided    
+    MCF->>MCF: Move CC Cash1 from Invoice1 to Invoice2
+    MCF->>SAP: Post -30 (reversal of CC Cash1) on Invoice1
+    Note over MCF: Invoice1:<br/>Amount: 100<br/>PaidAmount: 0
+    Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>PaidAmount: 30<br/>
+    Note over MCF: In this case MCF won't wait for taking action on Invoice2 as it's not aware of CW Cash applied in SAP
     MCF->>Payments: Charge 70
-    Note over MCF: Invoice2.Cash1: 30<br/>Invoice2.Cash4: 70<br/>Invoice2.PaidAmount: 100
-    MCF-->>SAP: Post 70 (THIS WILL FAIL as invoice already cleared in SAP)
-    SAP->>MCF: Post 70 on Invoice1
-    Note over MCF: Invoice1.Cash2: 70<br/>Invoice1.PaidAmount: 70
+    Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>Invoice2.Cash2: 70<br/>PaidAmount: 100
+    MCF-->>SAP: Post 70 on Invoice2
+    SAP->>MCF: Post 70 on Invoice1 (Eventually)
     SAP->>MCF: Post -70 on Invoice1
-    Note over MCF: Invoice1.Cash2: 70<br/>Invoice1.Cash5: -70<br/>Invoice1.PaidAmount: 0
+    Note over MCF: Invoice1:Amount: 100<br/>Cash1: 70<br/>Cash2: -70<br/>PaidAmount: 0
     SAP->>MCF: Post 70 on Invoice2
-    Note over MCF: Invoice2.Cash1: 30<br/>Invoice2.Cash4: 70<br/>Invoice2.Cash6: 70<br/>Invoice2.PaidAmount: 170 !!
+    Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>Cash4: 70<br/>Cash5: 70<br/>PaidAmount: 170 !!
     MCF->>Payments: Refund -70
-    Note over MCF: Invoice2.Cash1: 30<br/>Invoice2.Cash4: 70<br/>Invoice2.Cash6: 70<br/>Invoice2.Cash7: -70<br/>Invoice2.PaidAmount: 100
+    Note over MCF: Invoice2:<br/>Amount:100<br/>Cash1: 30<br/>.Cash4: 70<br/>Cash5: 70<br/>Invoice2.Cash6: -70<br/>PaidAmount: 100
     MCF->>SAP: Post -70
     MCF->>SAP: Post Cash4 70 (THIS WILL SUCCEED NOW)
     
