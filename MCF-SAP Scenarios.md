@@ -136,7 +136,7 @@ sequenceDiagram
     Invoicing->>MCF: Rebill Invoice2 Created 80
     Note over MCF: Invoice1 voided
     SAP->>MCF: Post 80 on Invoice2
-    Note over MCF: Invoice2.Cash1: 80<br/>Invoice2.PaidAmount:80
+    Note over MCF: Invoice2:<br/>Amount: 80<br/>Cash1: 80<br/>PaidAmount:80
 ```
 
 <br/>
@@ -152,14 +152,14 @@ sequenceDiagram
     participant SAP
     Invoicing->>MCF: Invoice1 Created 100    
     SAP->>MCF: Post 100
-    Note over MCF: Invoice1.Cash1: 100<br/>Invoice1.PaidAmount:100
+    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 100<br/>PaidAmount:100
     Invoicing->>MCF: Rebill Invoice2 Created 100
-    Note over MCF: Invoice1 voided
-    Note over MCF: Invoice2.PaidAmount: 0
+    Note over MCF: Invoice1 voided but check cash not moved
+    Note over MCF: Invoice2<br/>Amount: 100<br/>PaidAmount: 0
     SAP->>MCF: Post -100 on Invoice1
-    Note over MCF: Invoice1.Cash1: 100<br/>Invoice1.Cash2: -100<br/>Invoice1.PaidAmount:0
+    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 100<br/>Cash2: -100<br/>PaidAmount:0
     SAP->>MCF: Post 100 on Invoice2
-    Note over MCF: Invoice2.Cash1: 100<br/>Invoice2.PaidAmount:100
+    Note over MCF: Invoice2:<br/>Cash1: 100<br/>PaidAmount:100
 ```
 
 <br/>
@@ -175,14 +175,14 @@ sequenceDiagram
     participant SAP
     Invoicing->>MCF: Invoice1 Created 100    
     SAP->>MCF: Post 100
-    Note over MCF: Invoice1.Cash1: 100<br/>Invoice1.PaidAmount:100
+    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 100<br/>PaidAmount:100
     Invoicing->>MCF: Rebill Invoice2 Created 80
     Note over MCF: Invoice1 voided
     SAP->>MCF: Post -100 on Invoice1
-    Note over MCF: Invoice1.Cash1: 100<br/>Invoice1.Cash2: -100<br/>Invoice1.PaidAmount:0
-    Note over SAP: Move 20 to POA??
+    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 100<br/>Cash2: -100<br/>PaidAmount:0
+    Note over SAP: Move 20 to POA
     SAP->>MCF: Post 80 on Invoice2
-    Note over MCF: Invoice2.Cash1: 80<br/>Invoice2.PaidAmount:80
+    Note over MCF: Invoice2:<br/>Amount:80<br/>Cash1: 80<br/>Invoice2.PaidAmount:80
 ```
 
 <br/>
