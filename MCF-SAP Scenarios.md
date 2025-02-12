@@ -50,6 +50,26 @@ sequenceDiagram
 <br/>
 <br/>
 
+# Credit Card - Rebill of Unpaid invoice
+```mermaid
+%%{init: {'theme': 'default'} }%%
+sequenceDiagram
+    participant Invoicing
+    participant MCF
+    participant Payments
+    participant SAP
+    Invoicing->>MCF: Invoice1 Created 100
+    Invoicing->>MCF: Rebill Invoice2 Created 80
+    Note over MCF: Invoice1 voided
+    MCF->>Payments: Charge 80 on Invoice2
+    Note over MCF: Invoice2:<br/>Amount: 80<br/>Cash1: 80<br/>PaidAmount: 80
+    MCF->>SAP: Post 80
+```
+
+<br/>
+<br/>
+<br/>
+
 # Credit Card - Rebill of Paid Invoice - Same Amount
 ```mermaid
 %%{init: {'theme': 'default'} }%%
@@ -60,14 +80,14 @@ sequenceDiagram
     participant SAP
     Invoicing->>MCF: Invoice1 Created 100
     MCF->>Payments: Charge 100
-    Note over MCF: Invoice1.Cash1: 100<br/>Invoice1.PaidAmount: 100
+    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 100<br/>PaidAmount: 100
     MCF->>SAP: Post 100 on Invoice1
     Invoicing->>MCF: Rebill Invoice2 Created 100
     Note over MCF: Invoice1 voided
     MCF->>MCF: Move Cash1 from Invoice1 to Invoice2
     MCF->>SAP: Post -100 on Invoice1
-    Note over MCF: Invoice1.PaidAmount: 0
-    Note over MCF: Invoice2.Cash1: 100<br/>Invoice2.PaidAmount: 100
+    Note over MCF: Invoice1:<br/>Amount: 100<br/>PaidAmount: 0
+    Note over MCF: Invoice2<br/>Amount: 100<br/>Cash1: 100<br/>PaidAmount: 100
     MCF->>SAP: Post 100 on Invoice2
 
 ```
@@ -86,7 +106,7 @@ sequenceDiagram
     participant SAP
     Invoicing->>MCF: Invoice1 Created 100
     MCF->>Payments: Charge 100
-    Note over MCF: Invoice1.Cash1: 100<br/>Invoice1.PaidAmount: 100
+    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 100<br/>PaidAmount: 100
     MCF->>SAP: Post 100 on Invoice1
     Invoicing->>MCF: Rebill Invoice2 Created 80
     Note over MCF: Invoice1 voided
@@ -105,26 +125,24 @@ sequenceDiagram
 <br/>
 <br/>
 
-# Credit Card - Rebill of Unpaid invoice
+# Check/Wire - Rebill of Unpaid invoice
 ```mermaid
 %%{init: {'theme': 'default'} }%%
 sequenceDiagram
     participant Invoicing
     participant MCF
-    participant Payments
     participant SAP
-    Invoicing->>MCF: Invoice1 Created 100
+    Invoicing->>MCF: Invoice1 Created 100    
     Invoicing->>MCF: Rebill Invoice2 Created 80
     Note over MCF: Invoice1 voided
-    MCF->>Payments: Charge 80 on Invoice2
-    Note over MCF: Invoice2.Cash1: 80<br/>Invoice2.PaidAmount: 80
-    MCF->>SAP: Post 80
+    SAP->>MCF: Post 80 on Invoice2
+    Note over MCF: Invoice2.Cash1: 80<br/>Invoice2.PaidAmount:80
 ```
 
 <br/>
 <br/>
 <br/>
- 
+
 # Check/Wire - Rebill of Paid Invoice - Same Amount
 ```mermaid
 %%{init: {'theme': 'default'} }%%
@@ -163,25 +181,6 @@ sequenceDiagram
     SAP->>MCF: Post -100 on Invoice1
     Note over MCF: Invoice1.Cash1: 100<br/>Invoice1.Cash2: -100<br/>Invoice1.PaidAmount:0
     Note over SAP: Move 20 to POA??
-    SAP->>MCF: Post 80 on Invoice2
-    Note over MCF: Invoice2.Cash1: 80<br/>Invoice2.PaidAmount:80
-```
-
-<br/>
-<br/>
-<br/>
-
-# Chec/Wire - Rebill of Unpaid invoice
-```mermaid
-%%{init: {'theme': 'default'} }%%
-sequenceDiagram
-    participant Invoicing
-    participant MCF
-    participant SAP
-    Invoicing->>MCF: Invoice1 Created 100    
-    Invoicing->>MCF: Rebill Invoice2 Created 80
-    Note over MCF: Invoice1 voided
-    SAP-->>MCF: No reversal since there was no payment??
     SAP->>MCF: Post 80 on Invoice2
     Note over MCF: Invoice2.Cash1: 80<br/>Invoice2.PaidAmount:80
 ```
