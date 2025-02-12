@@ -296,7 +296,7 @@ sequenceDiagram
     Note over MCF: Invoice1:<br/>Amount: 100<br/>PaidAmount: 0
     Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>PaidAmount: 30<br/>
     MCF->>SAP: Post -30 (reversal of CC Cash1) on Invoice1
-    MCF-->>SAP: Post 30 on Invoice2
+    MCF->>SAP: Post 30 on Invoice2
     Note over MCF: In this case MCF won't wait for taking action on Invoice2 as it's not aware of CW Cash applied in SAP
     MCF->>Payments: Charge 70
     Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>Invoice2.Cash2: 70<br/>PaidAmount: 100
