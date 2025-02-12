@@ -11,9 +11,7 @@ sequenceDiagram
     Note over MCF: Cash1: 100<br/>PaidAmount: 100
     MCF->>SAP: Post 100   
 ```
-<br/>
-<br/>
-<br/>
+<hr style="page-break-after: always;">
 
 # Check/Wire - Single Payment
 ```mermaid
