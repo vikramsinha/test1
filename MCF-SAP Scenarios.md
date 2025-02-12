@@ -156,6 +156,7 @@ sequenceDiagram
     Invoicing->>MCF: Rebill Invoice2 Created 100
     Note over MCF: Invoice1 voided but check cash not moved
     Note over MCF: Invoice2<br/>Amount: 100<br/>PaidAmount: 0
+    MCF->>MCF: Wait for SAP
     SAP->>MCF: Post -100 on Invoice1
     Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 100<br/>Cash2: -100<br/>PaidAmount:0
     SAP->>MCF: Post 100 on Invoice2
@@ -177,7 +178,8 @@ sequenceDiagram
     SAP->>MCF: Post 100
     Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 100<br/>PaidAmount:100
     Invoicing->>MCF: Rebill Invoice2 Created 80
-    Note over MCF: Invoice1 voided
+    Note over MCF: Invoice1 voided but check cash not moved
+    MCF->>MCF: Wait for SAP
     SAP->>MCF: Post -100 on Invoice1
     Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 100<br/>Cash2: -100<br/>PaidAmount:0
     Note over SAP: Move 20 to POA
