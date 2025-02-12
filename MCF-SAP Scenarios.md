@@ -293,13 +293,14 @@ sequenceDiagram
     Invoicing->>MCF: Invoice2 rebill of Invoice1 Created 100
     MCF->>MCF: Invoice1 voided    
     MCF->>MCF: Move CC Cash1 from Invoice1 to Invoice2
-    MCF->>SAP: Post -30 (reversal of CC Cash1) on Invoice1
     Note over MCF: Invoice1:<br/>Amount: 100<br/>PaidAmount: 0
     Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>PaidAmount: 30<br/>
+    MCF->>SAP: Post -30 (reversal of CC Cash1) on Invoice1
+    MCF-->>SAP: Post 30 on Invoice2
     Note over MCF: In this case MCF won't wait for taking action on Invoice2 as it's not aware of CW Cash applied in SAP
     MCF->>Payments: Charge 70
     Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>Invoice2.Cash2: 70<br/>PaidAmount: 100
-    MCF-->>SAP: Post 70 on Invoice2
+    MCF->>SAP: Post 70 on Invoice2
     SAP->>MCF: Post 70 on Invoice1 (Eventually)
     SAP->>MCF: Post -70 on Invoice1
     Note over MCF: Invoice1:Amount: 100<br/>Cash1: 70<br/>Cash2: -70<br/>PaidAmount: 0
@@ -308,6 +309,5 @@ sequenceDiagram
     MCF->>Payments: Refund -70
     Note over MCF: Invoice2:<br/>Amount:100<br/>Cash1: 30<br/>.Cash4: 70<br/>Cash5: 70<br/>Invoice2.Cash6: -70<br/>PaidAmount: 100
     MCF->>SAP: Post -70
-    MCF->>SAP: Post Cash4 70 (THIS WILL SUCCEED NOW)
     
 ```
