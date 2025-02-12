@@ -305,7 +305,7 @@ sequenceDiagram
     SAP->>MCF: Post 70 on Invoice2
     Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>Cash2: 70<br/>Cash5: 70<br/>PaidAmount: 170 !!
     MCF->>Payments: Refund -70
-    Note over MCF: Invoice2:<br/>Amount:100<br/>Cash1: 30<br/>.Cash2: 70<br/>Cash5: 70<br/>Cash6: -70<br/>PaidAmount: 100
+    Note over MCF: Invoice2:<br/>Amount:100<br/>Cash1: 30<br/>Cash2: 70<br/>Cash5: 70<br/>Cash6: -70<br/>PaidAmount: 100
     MCF->>SAP: Post -70
     
 ```
