@@ -223,19 +223,20 @@ sequenceDiagram
     participant SAP
     Invoicing->>MCF: Invoice1 Created 100
     MCF->>Payments: Charge 30
-    Note over MCF: Invoice1.Cash1: 30<br/>Invoice1.PaidAmount: 30
-    MCF->>SAP: Post Cash1 30
-    SAP->>MCF: Post Cash2 70
-    Note over MCF: Invoice1.Cash1: 30<br/>Invoice1.Cash2: 70<br/>Invoice1.PaidAmount: 100
+    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 30<br/>PaidAmount: 30
+    MCF->>SAP: Post CC Cash1 30
+    SAP->>MCF: Post CW Cash2 70
+    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 30<br/>Cash2: 70<br/>PaidAmount: 100
     Invoicing->>MCF: Invoice2 rebill of Invoice1 Created 100
     MCF->>MCF: Invoice1 voided
-    MCF->>MCF: Move Cash1 (Credit Card) from Invoice1 to Invoice2
-    Note over MCF: Invoice1.Cash2: 70<br/>Invoice1.PaidAmount: 70
-    Note over MCF: Invoice2.Cash1: 30<br/>Invoice2.PaidAmount: 30<br/>Invoice2.Amount: 100
-    SAP->>MCF: Post Cash3 -70 on Invoice1
-    Note over MCF: Invoice1.Cash2: 70<br/>Invoice1.Cash3: -70<br/>Invoice1.PaidAmount: 0
-    SAP->>MCF: Post Cash4 70 on Invoice2
-    Note over MCF: Invoice2.Cash1: 30<br/>Invoice2.Cash4: 70<br/>Invoice2.PaidAmount: 100
+    MCF->>MCF: Move CC Cash1 from Invoice1 to Invoice2, leave CW Cash2 as-is
+    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash2: 70<br/>PaidAmount: 70
+    Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>PaidAmount: 30
+    MCF->>SAP: Post reversal of CC Cash1 -30 on Invoice1
+    SAP->>MCF: Post -70 (reversal of CW Cash2) on Invoice1
+    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash2: 70<br/>Cash3: -70<br/>PaidAmount: 0
+    SAP->>MCF: Post 70 (CW cash moved from Invoice1) on Invoice2
+    Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>Cash4: 70<br/>PaidAmount: 100
 ```
 <br/>
 <br/>
