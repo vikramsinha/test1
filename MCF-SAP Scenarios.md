@@ -6,9 +6,9 @@ sequenceDiagram
     participant MCF
     participant Payments
     participant SAP
-    Invoicing->>MCF: Invoice Created 100
+    Invoicing->>MCF: INVOICE_1 Created 100
     MCF->>Payments: Charge 100
-    Note over MCF: Cash1: 100<br/>PaidAmount: 100
+    Note over MCF: CASH_1: 100<br/>PaidAmount: 100
     MCF->>SAP: Post 100   
 ```
 <hr style="page-break-after: always;">
@@ -20,41 +20,44 @@ sequenceDiagram
     participant Invoicing
     participant MCF
     participant SAP
-    Invoicing->>MCF: Invoice Created 100    
+    Invoicing->>MCF: INVOICE_1 Created 100    
     SAP->>MCF: Post 100
-    Note over MCF: Cash1: 100<br/>PaidAmount:100
+    Note over MCF: CASH_1: 100<br/>PaidAmount:100
 ```
 
 <br/>
 <br/>
 <br/>
 
-# Check/Wire - Multiple Payments (As-is)
+# Check/Wire - Multiple Payments (Current)
 ```mermaid
 %%{init: {'theme': 'default'} }%%
 sequenceDiagram
     participant Invoicing
     participant MCF
     participant SAP
-    Invoicing->>MCF: Invoice Created 100
+    Invoicing->>MCF: INVOICE_1 Created 100
     SAP->>MCF: Post 120
     Note over MCF: Payment not applied due to amount validations
     SAP->>MCF: Post -20
     Note over MCF: Payment not applied due to amount validations
 ```
+<br/>
+<br/>
+<br/>
 
-# Check/Wire - Multiple Payments (New)
+# Check/Wire - Multiple Payments (Phase 2 Changes)
 ```mermaid
 %%{init: {'theme': 'default'} }%%
 sequenceDiagram
     participant Invoicing
     participant MCF
     participant SAP
-    Invoicing->>MCF: Invoice Created 100
+    Invoicing->>MCF: INVOICE_1 Created 100
     SAP->>MCF: Post 120
-    Note over MCF: Cash1: 120<br/>PaidAmount:120
+    Note over MCF: CASH_1: 120<br/>PaidAmount:120
     SAP->>MCF: Post -20
-    Note over MCF: Cash1: 120<br/>Cash2: -20<br/>PaidAmount:100
+    Note over MCF: CASH_1: 120<br/>CASH_2: -20<br/>PaidAmount:100
 ```
 <br/>
 <br/>
@@ -68,11 +71,11 @@ sequenceDiagram
     participant MCF
     participant Payments
     participant SAP
-    Invoicing->>MCF: Invoice1 Created 100
-    Invoicing->>MCF: Rebill Invoice2 Created 80
-    Note over MCF: Invoice1 voided
-    MCF->>Payments: Charge 80 on Invoice2
-    Note over MCF: Invoice2:<br/>Amount: 80<br/>Cash1: 80<br/>PaidAmount: 80
+    Invoicing->>MCF: INVOICE_1 Created 100
+    Invoicing->>MCF: Rebill INVOICE_2 Created 80
+    Note over MCF: INVOICE_1 voided
+    MCF->>Payments: Charge 80 on INVOICE_2
+    Note over MCF: INVOICE_2:<br/>Amount: 80<br/>CASH_1: 80<br/>PaidAmount: 80
     MCF->>SAP: Post 80
 ```
 
@@ -80,7 +83,7 @@ sequenceDiagram
 <br/>
 <br/>
 
-# Credit Card - Rebill of Paid Invoice - Same Amount
+# Credit Card - Rebill of Paid Invoice - Same Amount (Current)
 ```mermaid
 %%{init: {'theme': 'default'} }%%
 sequenceDiagram
@@ -88,17 +91,41 @@ sequenceDiagram
     participant MCF
     participant Payments
     participant SAP
-    Invoicing->>MCF: Invoice1 Created 100
+    Invoicing->>MCF: INVOICE_1 Created 100
     MCF->>Payments: Charge 100
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 100<br/>PaidAmount: 100
-    MCF->>SAP: Post 100 on Invoice1
-    Invoicing->>MCF: Rebill Invoice2 Created 100
-    Note over MCF: Invoice1 voided
-    MCF->>MCF: Move Cash1 from Invoice1 to Invoice2
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>PaidAmount: 0
-    Note over MCF: Invoice2<br/>Amount: 100<br/>Cash1: 100<br/>PaidAmount: 100
-    MCF->>SAP: Post -100 (reversal of Cash1) on Invoice1
-    MCF->>SAP: Post 100 on Invoice2
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 100<br/>PaidAmount: 100
+    MCF->>SAP: Post 100 on INVOICE_1
+    Invoicing->>MCF: Rebill INVOICE_2 Created 100
+    Note over MCF: INVOICE_1 voided
+    MCF->>MCF: Move CASH_1 from INVOICE_1 to INVOICE_2
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>PaidAmount: 0
+    Note over MCF: INVOICE_2<br/>Amount: 100<br/>CASH_1: 100<br/>PaidAmount: 100
+    Note over MCF: MCF doesn't re-post payment on INVOICE_2 as SAP also already moved payments from INVOICE_1 to INVOICE_2
+```
+
+<br/>
+<br/>
+<br/>
+
+# Credit Card - Rebill of Paid Invoice - Same Amount (Phase 3 Changes)
+```mermaid
+%%{init: {'theme': 'default'} }%%
+sequenceDiagram
+    participant Invoicing
+    participant MCF
+    participant Payments
+    participant SAP
+    Invoicing->>MCF: INVOICE_1 Created 100
+    MCF->>Payments: Charge 100
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 100<br/>PaidAmount: 100
+    MCF->>SAP: Post 100 on INVOICE_1
+    Invoicing->>MCF: Rebill INVOICE_2 Created 100
+    Note over MCF: INVOICE_1 voided
+    MCF->>MCF: Move CASH_1 from INVOICE_1 to INVOICE_2
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>PaidAmount: 0
+    Note over MCF: INVOICE_2<br/>Amount: 100<br/>CASH_1: 100<br/>PaidAmount: 100
+    MCF->>SAP: Post -100 (reversal of CASH_1) on INVOICE_1
+    MCF->>SAP: Post 100 on INVOICE_2
 
 ```
 
@@ -106,7 +133,7 @@ sequenceDiagram
 <br/>
 <br/>
 
-# Credit Card - Rebill of Paid Invoice - Lower Amount
+# Credit Card - Rebill of Paid Invoice - Lower Amount (Current)
 ```mermaid
 %%{init: {'theme': 'default'} }%%
 sequenceDiagram
@@ -114,20 +141,47 @@ sequenceDiagram
     participant MCF
     participant Payments
     participant SAP
-    Invoicing->>MCF: Invoice1 Created 100
+    Invoicing->>MCF: INVOICE_1 Created 100
     MCF->>Payments: Charge 100
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 100<br/>PaidAmount: 100
-    MCF->>SAP: Post 100 on Invoice1
-    Invoicing->>MCF: Rebill Invoice2 Created 80
-    Note over MCF: Invoice1 voided
-    MCF->>MCF: Move Cash1 from Invoice1 to Invoice2
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>PaidAmount: 0
-    Note over MCF: Invoice2:<br/>Amount: 80<br/>Cash1: 100<br/>PaidAmount: 100
-    MCF->>SAP: Post -100 (reversal of Cash1) on Invoice1
-    MCF->>Payments: Refund -20 (Cash2)
-    Note over MCF: Invoice2:<br/>Amount: 80<br/>Cash1: 100<br/>Cash2: -20<br/>PaidAmount: 80
-    MCF->>SAP: Post 100 on Invoice2
-    MCF->>SAP: Post -20 on Invoice2
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 100<br/>PaidAmount: 100
+    MCF->>SAP: Post 100 on INVOICE_1
+    Invoicing->>MCF: Rebill INVOICE_2 Created 80
+    Note over MCF: INVOICE_1 voided
+    MCF->>MCF: Move CASH_1 from INVOICE_1 to INVOICE_2
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>PaidAmount: 0
+    Note over MCF: INVOICE_2:<br/>Amount: 80<br/>CASH_1: 100<br/>PaidAmount: 100
+    MCF->>SAP: MCF doesn't re-post payment on INVOICE_2 as SAP also already moved payments to INVOICE_2
+    MCF->>Payments: Refund -20 (CASH_2)
+    Note over MCF: INVOICE_2:<br/>Amount: 80<br/>CASH_1: 100<br/>CASH_2: -20<br/>PaidAmount: 80
+    MCF->>SAP: Post -20 on INVOICE_2
+```
+
+<br/>
+<br/>
+<br/>
+
+# Credit Card - Rebill of Paid Invoice - Lower Amount (Phase 3 Changes)
+```mermaid
+%%{init: {'theme': 'default'} }%%
+sequenceDiagram
+    participant Invoicing
+    participant MCF
+    participant Payments
+    participant SAP
+    Invoicing->>MCF: INVOICE_1 Created 100
+    MCF->>Payments: Charge 100
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 100<br/>PaidAmount: 100
+    MCF->>SAP: Post 100 on INVOICE_1
+    Invoicing->>MCF: Rebill INVOICE_2 Created 80
+    Note over MCF: INVOICE_1 voided
+    MCF->>MCF: Move CASH_1 from INVOICE_1 to INVOICE_2
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>PaidAmount: 0
+    Note over MCF: INVOICE_2:<br/>Amount: 80<br/>CASH_1: 100<br/>PaidAmount: 100
+    MCF->>SAP: Post -100 (reversal of CASH_1) on INVOICE_1
+    MCF->>Payments: Refund -20 (CASH_2)
+    Note over MCF: INVOICE_2:<br/>Amount: 80<br/>CASH_1: 100<br/>CASH_2: -20<br/>PaidAmount: 80
+    MCF->>SAP: Post 100 on INVOICE_2
+    MCF->>SAP: Post -20 on INVOICE_2
 
 ```
 
@@ -142,35 +196,56 @@ sequenceDiagram
     participant Invoicing
     participant MCF
     participant SAP
-    Invoicing->>MCF: Invoice1 Created 100    
-    Invoicing->>MCF: Rebill Invoice2 Created 80
-    Note over MCF: Invoice1 voided
-    SAP->>MCF: Post 80 on Invoice2
-    Note over MCF: Invoice2:<br/>Amount: 80<br/>Cash1: 80<br/>PaidAmount:80
+    Invoicing->>MCF: INVOICE_1 Created 100    
+    Invoicing->>MCF: Rebill INVOICE_2 Created 80
+    Note over MCF: INVOICE_1 voided
+    SAP->>MCF: Post 80 on INVOICE_2
+    Note over MCF: INVOICE_2:<br/>Amount: 80<br/>CASH_1: 80<br/>PaidAmount:80
 ```
 
 <br/>
 <br/>
 <br/>
 
-# Check/Wire - Rebill of Paid Invoice - Same Amount
+# Check/Wire - Rebill of Paid Invoice - Same Amount (Current)
 ```mermaid
 %%{init: {'theme': 'default'} }%%
 sequenceDiagram
     participant Invoicing
     participant MCF
     participant SAP
-    Invoicing->>MCF: Invoice1 Created 100    
+    Invoicing->>MCF: INVOICE_1 Created 100    
     SAP->>MCF: Post 100
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 100<br/>PaidAmount:100
-    Invoicing->>MCF: Rebill Invoice2 Created 100
-    Note over MCF: Invoice1 voided but check cash not moved
-    Note over MCF: Invoice2<br/>Amount: 100<br/>PaidAmount: 0
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 100<br/>PaidAmount:100
+    Invoicing->>MCF: Rebill INVOICE_2 Created 100
+    Note over MCF: INVOICE_1 voided
+    MCF->>MCF: Move CASH_1 from INVOICE_1 to INVOICE_2
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>PaidAmount: 0
+    Note over MCF: INVOICE_2<br/>Amount: 100<br/>CASH_1: 100<br/>PaidAmount: 100
+```
+
+<br/>
+<br/>
+<br/>
+
+# Check/Wire - Rebill of Paid Invoice - Same Amount (Phase 2 Changes)
+```mermaid
+%%{init: {'theme': 'default'} }%%
+sequenceDiagram
+    participant Invoicing
+    participant MCF
+    participant SAP
+    Invoicing->>MCF: INVOICE_1 Created 100    
+    SAP->>MCF: Post 100
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 100<br/>PaidAmount:100
+    Invoicing->>MCF: Rebill INVOICE_2 Created 100
+    Note over MCF: INVOICE_1 voided but check cash not moved
+    Note over MCF: INVOICE_2<br/>Amount: 100<br/>PaidAmount: 0
     MCF->>MCF: Wait for SAP
-    SAP->>MCF: Post -100 on Invoice1
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 100<br/>Cash2: -100<br/>PaidAmount:0
-    SAP->>MCF: Post 100 on Invoice2
-    Note over MCF: Invoice2:<br/>Cash1: 100<br/>PaidAmount:100
+    SAP->>MCF: Post -100 on INVOICE_1
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 100<br/>CASH_2: -100<br/>PaidAmount:0
+    SAP->>MCF: Post 100 on INVOICE_2
+    Note over MCF: INVOICE_2:<br/>CASH_1: 100<br/>PaidAmount:100
 ```
 
 <br/>
@@ -184,17 +259,17 @@ sequenceDiagram
     participant Invoicing
     participant MCF
     participant SAP
-    Invoicing->>MCF: Invoice1 Created 100    
+    Invoicing->>MCF: INVOICE_1 Created 100    
     SAP->>MCF: Post 100
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 100<br/>PaidAmount:100
-    Invoicing->>MCF: Rebill Invoice2 Created 80
-    Note over MCF: Invoice1 voided but check cash not moved
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 100<br/>PaidAmount:100
+    Invoicing->>MCF: Rebill INVOICE_2 Created 80
+    Note over MCF: INVOICE_1 voided but check cash not moved
     MCF->>MCF: Wait for SAP
-    SAP->>MCF: Post -100 on Invoice1
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 100<br/>Cash2: -100<br/>PaidAmount:0
+    SAP->>MCF: Post -100 on INVOICE_1
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 100<br/>CASH_2: -100<br/>PaidAmount:0
     Note over SAP: Move 20 to POA
-    SAP->>MCF: Post 80 on Invoice2
-    Note over MCF: Invoice2:<br/>Amount:80<br/>Cash1: 80<br/>Invoice2.PaidAmount:80
+    SAP->>MCF: Post 80 on INVOICE_2
+    Note over MCF: INVOICE_2:<br/>Amount:80<br/>CASH_1: 80<br/>INVOICE_2.PaidAmount:80
 ```
 
 <br/>
@@ -211,15 +286,15 @@ sequenceDiagram
     participant SAP
     Invoicing->>MCF: Invoice Created 100
     MCF->>Payments: Charge 100
-    Note over MCF: Cash1: 100<br/>PaidAmount: 100
-    MCF-->>SAP: Failed to Post Cash1 100
+    Note over MCF: CASH_1: 100<br/>PaidAmount: 100
+    MCF-->>SAP: Failed to Post CASH_1 100
     SAP->>MCF: Post 100
-    Note over MCF: Cash1: 100<br/>Cash2: 100<br/>PaidAmount: 200 !!
+    Note over MCF: CASH_1: 100<br/>CASH_2: 100<br/>PaidAmount: 200 !!
     MCF->>Payments: Refund -100
-    Note over MCF: Cash1: 100<br/>Cash2: 100<br/>Cash3: -100<br/>PaidAmount: 100
-    MCF-->>SAP: Post Cash1 100 (THIS WILL FAIL initially as invoice already cleared in SAP)
-    MCF->>SAP: Post Cash3 -100
-    MCF->>SAP: Post Cash1 100 (NOW THIS WILL SUCCEED)
+    Note over MCF: CASH_1: 100<br/>CASH_2: 100<br/>CASH_3: -100<br/>PaidAmount: 100
+    MCF-->>SAP: Post CASH_1 100 (THIS WILL FAIL initially as invoice already cleared in SAP)
+    MCF->>SAP: Post CASH_3 -100
+    MCF->>SAP: Post CASH_1 100 (NOW THIS WILL SUCCEED)
 ```
 <br/>
 <br/>
@@ -233,22 +308,22 @@ sequenceDiagram
     participant MCF
     participant Payments
     participant SAP
-    Invoicing->>MCF: Invoice1 Created 100
+    Invoicing->>MCF: INVOICE_1 Created 100
     MCF->>Payments: Charge 30
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 30<br/>PaidAmount: 30
-    MCF->>SAP: Post CC Cash1 30
-    SAP->>MCF: Post CW Cash2 70
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 30<br/>Cash2: 70<br/>PaidAmount: 100
-    Invoicing->>MCF: Invoice2 rebill of Invoice1 Created 100
-    MCF->>MCF: Invoice1 voided
-    MCF->>MCF: Move CC Cash1 from Invoice1 to Invoice2, leave CW Cash2 as-is
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash2: 70<br/>PaidAmount: 70
-    Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>PaidAmount: 30
-    MCF->>SAP: Post reversal of CC Cash1 -30 on Invoice1
-    SAP->>MCF: Post -70 (reversal of CW Cash2) on Invoice1
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash2: 70<br/>Cash3: -70<br/>PaidAmount: 0
-    SAP->>MCF: Post 70 (CW cash moved from Invoice1) on Invoice2
-    Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>Cash4: 70<br/>PaidAmount: 100
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 30<br/>PaidAmount: 30
+    MCF->>SAP: Post CC CASH_1 30
+    SAP->>MCF: Post CW CASH_2 70
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 30<br/>CASH_2: 70<br/>PaidAmount: 100
+    Invoicing->>MCF: INVOICE_2 rebill of INVOICE_1 Created 100
+    MCF->>MCF: INVOICE_1 voided
+    MCF->>MCF: Move CC CASH_1 from INVOICE_1 to INVOICE_2, leave CW CASH_2 as-is
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_2: 70<br/>PaidAmount: 70
+    Note over MCF: INVOICE_2:<br/>Amount: 100<br/>CASH_1: 30<br/>PaidAmount: 30
+    MCF->>SAP: Post reversal of CC CASH_1 -30 on INVOICE_1
+    SAP->>MCF: Post -70 (reversal of CW CASH_2) on INVOICE_1
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_2: 70<br/>CASH_3: -70<br/>PaidAmount: 0
+    SAP->>MCF: Post 70 (CW cash moved from INVOICE_1) on INVOICE_2
+    Note over MCF: INVOICE_2:<br/>Amount: 100<br/>CASH_1: 30<br/>CASH_4: 70<br/>PaidAmount: 100
 ```
 <br/>
 <br/>
@@ -262,23 +337,23 @@ sequenceDiagram
     participant MCF
     participant Payments
     participant SAP
-    Invoicing->>MCF: Invoice1 Created 100
+    Invoicing->>MCF: INVOICE_1 Created 100
     MCF->>Payments: Charge 30
-    MCF->>SAP: Post CC Cash1 30
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 30<br/>PaidAmount: 30
-    SAP->>MCF: Post CW Cash2 20
-    Note over MCF: Invoice1:<br/>Cash1: 30<br/>Cash2: 20<br/>PaidAmount: 50
-    Invoicing->>MCF: Invoice2 rebill of Invoice1 Created 100
-    MCF->>MCF: Invoice1 voided
-    MCF->>MCF: Move CC Cash1 from Invoice1 to Invoice2
-    Note over MCF: Invoice1<br/>Amount: 100<br/>Cash2: 20<br/>PaidAmount: 20
-    Note over MCF: Invoice2:Amount: 100<br/>Cash1: 30<br/>PaidAmount: 30
-    SAP->>MCF: Post -20 (reversal of CW Cash2) on Invoice1
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash2: 20<br/>Cash3: -20<br/>PaidAmount: 0
-    SAP->>MCF: Post 20 on Invoice2
-    Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>Cash4: 20<br/>PaidAmount: 50<br/>
+    MCF->>SAP: Post CC CASH_1 30
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 30<br/>PaidAmount: 30
+    SAP->>MCF: Post CW CASH_2 20
+    Note over MCF: INVOICE_1:<br/>CASH_1: 30<br/>CASH_2: 20<br/>PaidAmount: 50
+    Invoicing->>MCF: INVOICE_2 rebill of INVOICE_1 Created 100
+    MCF->>MCF: INVOICE_1 voided
+    MCF->>MCF: Move CC CASH_1 from INVOICE_1 to INVOICE_2
+    Note over MCF: INVOICE_1<br/>Amount: 100<br/>CASH_2: 20<br/>PaidAmount: 20
+    Note over MCF: INVOICE_2:Amount: 100<br/>CASH_1: 30<br/>PaidAmount: 30
+    SAP->>MCF: Post -20 (reversal of CW CASH_2) on INVOICE_1
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_2: 20<br/>CASH_3: -20<br/>PaidAmount: 0
+    SAP->>MCF: Post 20 on INVOICE_2
+    Note over MCF: INVOICE_2:<br/>Amount: 100<br/>CASH_1: 30<br/>CASH_4: 20<br/>PaidAmount: 50<br/>
     MCF->>Payments: Charge 50
-    Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>Cash4: 20<br/>Cash5: 50<br/>PaidAmount: 100
+    Note over MCF: INVOICE_2:<br/>Amount: 100<br/>CASH_1: 30<br/>CASH_4: 20<br/>Cash5: 50<br/>PaidAmount: 100
     MCF->>SAP: Post CC Cash5 50
 ```
 <br/>
@@ -293,31 +368,31 @@ sequenceDiagram
     participant MCF
     participant Payments
     participant SAP
-    Invoicing->>MCF: Invoice1 Created 100
+    Invoicing->>MCF: INVOICE_1 Created 100
     MCF->>Payments: Charge 30
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>Cash1: 30<br/>PaidAmount: 30
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 30<br/>PaidAmount: 30
     MCF->>SAP: Post 30
     SAP->>SAP: Check payment for 70
     SAP-->>MCF: Failed to post check payment
-    Note over MCF: Invoice1:<br/>Cash1: 30<br/>PaidAmount: 30
-    Invoicing->>MCF: Invoice2 rebill of Invoice1 Created 100
-    MCF->>MCF: Invoice1 voided    
-    MCF->>MCF: Move CC Cash1 from Invoice1 to Invoice2
-    Note over MCF: Invoice1:<br/>Amount: 100<br/>PaidAmount: 0
-    Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>PaidAmount: 30<br/>
-    MCF->>SAP: Post -30 (reversal of CC Cash1) on Invoice1
-    MCF->>SAP: Post 30 on Invoice2
-    Note over MCF: In this case MCF won't wait for taking action on Invoice2 as it's not aware of CW Cash applied in SAP
+    Note over MCF: INVOICE_1:<br/>CASH_1: 30<br/>PaidAmount: 30
+    Invoicing->>MCF: INVOICE_2 rebill of INVOICE_1 Created 100
+    MCF->>MCF: INVOICE_1 voided    
+    MCF->>MCF: Move CC CASH_1 from INVOICE_1 to INVOICE_2
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>PaidAmount: 0
+    Note over MCF: INVOICE_2:<br/>Amount: 100<br/>CASH_1: 30<br/>PaidAmount: 30<br/>
+    MCF->>SAP: Post -30 (reversal of CC CASH_1) on INVOICE_1
+    MCF->>SAP: Post 30 on INVOICE_2
+    Note over MCF: In this case MCF won't wait for taking action on INVOICE_2 as it's not aware of CW Cash applied in SAP
     MCF->>Payments: Charge 70
-    Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>Cash2: 70<br/>PaidAmount: 100
-    MCF->>SAP: Post 70 on Invoice2
-    SAP->>MCF: Post 70 on Invoice1 (Eventually)
-    SAP->>MCF: Post -70 on Invoice1
-    Note over MCF: Invoice1:Amount: 100<br/>Cash3: 70<br/>Cash4: -70<br/>PaidAmount: 0
-    SAP->>MCF: Post 70 on Invoice2
-    Note over MCF: Invoice2:<br/>Amount: 100<br/>Cash1: 30<br/>Cash2: 70<br/>Cash5: 70<br/>PaidAmount: 170 !!
+    Note over MCF: INVOICE_2:<br/>Amount: 100<br/>CASH_1: 30<br/>CASH_2: 70<br/>PaidAmount: 100
+    MCF->>SAP: Post 70 on INVOICE_2
+    SAP->>MCF: Post 70 on INVOICE_1 (Eventually)
+    SAP->>MCF: Post -70 on INVOICE_1
+    Note over MCF: INVOICE_1:Amount: 100<br/>CASH_3: 70<br/>CASH_4: -70<br/>PaidAmount: 0
+    SAP->>MCF: Post 70 on INVOICE_2
+    Note over MCF: INVOICE_2:<br/>Amount: 100<br/>CASH_1: 30<br/>CASH_2: 70<br/>Cash5: 70<br/>PaidAmount: 170 !!
     MCF->>Payments: Refund -70
-    Note over MCF: Invoice2:<br/>Amount:100<br/>Cash1: 30<br/>Cash2: 70<br/>Cash5: 70<br/>Cash6: -70<br/>PaidAmount: 100
+    Note over MCF: INVOICE_2:<br/>Amount:100<br/>CASH_1: 30<br/>CASH_2: 70<br/>Cash5: 70<br/>Cash6: -70<br/>PaidAmount: 100
     MCF->>SAP: Post -70
     
 ```
