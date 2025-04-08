@@ -28,8 +28,8 @@ sequenceDiagram
 <br/>
 <br/>
 <br/>
- 
-# Check/Wire - Multiple Payments
+
+# Check/Wire - Multiple Payments (As-is)
 ```mermaid
 %%{init: {'theme': 'default'} }%%
 sequenceDiagram
@@ -37,12 +37,24 @@ sequenceDiagram
     participant MCF
     participant SAP
     Invoicing->>MCF: Invoice Created 100
-    SAP->>MCF: Post 50
-    Note over MCF: Cash1: 50<br/>PaidAmount:50
-    SAP->>MCF: Post -50
-    Note over MCF: Cash1: 50<br/>Cash2: -50<br/>PaidAmount:0
-    SAP->>MCF: Post 100
-    Note over MCF: Cash1: 50<br/>Cash2: -50<br/>Cash3: 100<br/>PaidAmount:100
+    SAP->>MCF: Post 120
+    Note over MCF: Payment not applied due to amount validations
+    SAP->>MCF: Post -20
+    Note over MCF: Payment not applied due to amount validations
+```
+
+# Check/Wire - Multiple Payments (New)
+```mermaid
+%%{init: {'theme': 'default'} }%%
+sequenceDiagram
+    participant Invoicing
+    participant MCF
+    participant SAP
+    Invoicing->>MCF: Invoice Created 100
+    SAP->>MCF: Post 120
+    Note over MCF: Cash1: 120<br/>PaidAmount:120
+    SAP->>MCF: Post -20
+    Note over MCF: Cash1: 120<br/>Cash2: -20<br/>PaidAmount:100
 ```
 <br/>
 <br/>
