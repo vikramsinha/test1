@@ -252,7 +252,28 @@ sequenceDiagram
 <br/>
 <br/>
 
-# Check/Wire - Rebill of Paid Invoice - Lower Amount
+# Check/Wire - Rebill of Paid Invoice - Lower Amount (Current)
+```mermaid
+%%{init: {'theme': 'default'} }%%
+sequenceDiagram
+    participant Invoicing
+    participant MCF
+    participant SAP
+    Invoicing->>MCF: INVOICE_1 Created 100    
+    SAP->>MCF: Post 100
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 100<br/>PaidAmount:100
+    Invoicing->>MCF: Rebill INVOICE_2 Created 80
+    Note over MCF: INVOICE_1 voided
+    MCF->>MCF: Move CASH_1 from INVOICE_1 to INVOICE_2
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>PaidAmount: 0
+    Note over MCF: INVOICE_2<br/>Amount: 80<br/>CASH_1: 80<br/>PaidAmount: 80
+```
+
+<br/>
+<br/>
+<br/>
+
+# Check/Wire - Rebill of Paid Invoice - Lower Amount (Phase 2 Changes)
 ```mermaid
 %%{init: {'theme': 'default'} }%%
 sequenceDiagram
@@ -269,14 +290,34 @@ sequenceDiagram
     Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 100<br/>CASH_2: -100<br/>PaidAmount:0
     Note over SAP: Move 20 to POA
     SAP->>MCF: Post 80 on INVOICE_2
-    Note over MCF: INVOICE_2:<br/>Amount:80<br/>CASH_1: 80<br/>INVOICE_2.PaidAmount:80
+    Note over MCF: INVOICE_2:<br/>Amount:80<br/>CASH_1: 80<br/>PaidAmount:80
 ```
 
 <br/>
 <br/>
 <br/>
 
-# Mixed - Check payment received after invoice already paid using credit card
+# CC customer - Check payment received after invoice already paid using credit card (Current)
+```mermaid
+%%{init: {'theme': 'default'} }%%
+sequenceDiagram
+    participant Invoicing
+    participant MCF
+    participant Payments
+    participant SAP
+    Invoicing->>MCF: INVOICE_1 Created 100
+    MCF->>Payments: Charge 100
+    Note over MCF: CASH_1: 100<br/>PaidAmount: 100
+    MCF-->>SAP: Failed to Post CASH_1 100 due (networking issues/invoice delayed in SAP etc.)
+    SAP->>MCF: Post Check payment 100
+    Note over MCF: Apply check payment fails due to amount validations   
+    MCF->>SAP: Post CASH_1 to SAP keeps failing forever as INVOICE_1 is already paid in SAP with check payment
+```
+<br/>
+<br/>
+<br/>
+
+# CC customer - Check payment received after invoice already paid using credit card (Phase 2 Changes)
 ```mermaid
 %%{init: {'theme': 'default'} }%%
 sequenceDiagram
@@ -300,7 +341,60 @@ sequenceDiagram
 <br/>
 <br/>
 
-# Rebill of invoice which had both credit card and check payments
+# Rebill of invoice which had both credit card and check payments (Current)
+```mermaid
+%%{init: {'theme': 'default'} }%%
+sequenceDiagram
+    participant Invoicing
+    participant MCF
+    participant Payments
+    participant SAP
+    Invoicing->>MCF: INVOICE_1 Created 100
+    MCF->>Payments: Charge 30
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 30<br/>PaidAmount: 30
+    MCF->>SAP: Post CC CASH_1 30
+    SAP->>MCF: Post CW CASH_2 70
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 30<br/>CASH_2: 70<br/>PaidAmount: 100
+    Invoicing->>MCF: INVOICE_2 rebill of INVOICE_1 Created 100
+    MCF->>MCF: INVOICE_1 voided
+    MCF->>MCF: Move CASH_1 and CASH_2 from INVOICE_1 to INVOICE_2
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>PaidAmount: 0
+    Note over MCF: INVOICE_2:<br/>Amount: 100<br/>CASH_1: 30<br/>CASH_2: 70<br/>PaidAmount: 100
+    Note over MCF: Not re-posting CASH_1 on INVOICE_2 as SAP also already moved
+```
+<br/>
+<br/>
+<br/>
+
+# Rebill of invoice which had both credit card and check payments (Phase 2 Changes)
+```mermaid
+%%{init: {'theme': 'default'} }%%
+sequenceDiagram
+    participant Invoicing
+    participant MCF
+    participant Payments
+    participant SAP
+    Invoicing->>MCF: INVOICE_1 Created 100
+    MCF->>Payments: Charge 30
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 30<br/>PaidAmount: 30
+    MCF->>SAP: Post CC CASH_1 30
+    SAP->>MCF: Post CW CASH_2 70
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_1: 30<br/>CASH_2: 70<br/>PaidAmount: 100
+    Invoicing->>MCF: INVOICE_2 rebill of INVOICE_1 Created 100
+    MCF->>MCF: INVOICE_1 voided
+    MCF->>MCF: Move CC CASH_1 from INVOICE_1 to INVOICE_2, leave CW CASH_2 as-is
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_2: 70<br/>PaidAmount: 70
+    Note over MCF: INVOICE_2:<br/>Amount: 100<br/>CASH_1: 30<br/>PaidAmount: 30
+    SAP->>MCF: Post -70 (reversal of CW CASH_2) on INVOICE_1
+    Note over MCF: INVOICE_1:<br/>Amount: 100<br/>CASH_2: 70<br/>CASH_3: -70<br/>PaidAmount: 0
+    SAP->>MCF: Post 70 CW cash on INVOICE_2
+    Note over MCF: INVOICE_2:<br/>Amount: 100<br/>CASH_1: 30<br/>CASH_4: 70<br/>PaidAmount: 100
+```
+<br/>
+<br/>
+<br/>
+
+# Rebill of invoice which had both credit card and check payments (Phase 3 Changes)
 ```mermaid
 %%{init: {'theme': 'default'} }%%
 sequenceDiagram
